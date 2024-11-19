@@ -61,6 +61,7 @@ func main() {
 
 	// Create Unix listener
 	gus := grpc.NewServer(grpc.Creds(creds))
+	// 又创建监听extproc.sock的unix socket的server
 	envoy_service_proc_v3.RegisterExternalProcessorServer(gus, &extProcServer{})
 
 	udsAddr := "/var/run/ext-proc/extproc.sock"
@@ -214,12 +215,14 @@ func (s *extProcServer) Process(srv envoy_service_proc_v3.ExternalProcessor_Proc
 			if v.RequestHeaders != nil {
 				hdrs := v.RequestHeaders.Headers.GetHeaders()
 				for _, hdr := range hdrs {
+					// 遍历headers
 					if hdr.Key == "x-request-client-header" {
 						xrch = string(hdr.RawValue)
 					}
 				}
 			}
 
+			// 构建header responses
 			rhq := &envoy_service_proc_v3.HeadersResponse{
 				Response: &envoy_service_proc_v3.CommonResponse{
 					HeaderMutation: &envoy_service_proc_v3.HeaderMutation{
@@ -236,6 +239,7 @@ func (s *extProcServer) Process(srv envoy_service_proc_v3.ExternalProcessor_Proc
 			}
 
 			if xrch != "" {
+				// 如果请求中有x-request-ext-processed这个header，则在response中添加这两个header的内容
 				rhq.Response.HeaderMutation.SetHeaders = append(rhq.Response.HeaderMutation.SetHeaders,
 					&envoy_api_v3_core.HeaderValueOption{
 						Header: &envoy_api_v3_core.HeaderValue{
@@ -259,6 +263,7 @@ func (s *extProcServer) Process(srv envoy_service_proc_v3.ExternalProcessor_Proc
 			}
 			break
 		case *envoy_service_proc_v3.ProcessingRequest_ResponseHeaders:
+			// 如果收到的是repsonse header
 			rhq := &envoy_service_proc_v3.HeadersResponse{
 				Response: &envoy_service_proc_v3.CommonResponse{
 					HeaderMutation: &envoy_service_proc_v3.HeaderMutation{
@@ -282,6 +287,7 @@ func (s *extProcServer) Process(srv envoy_service_proc_v3.ExternalProcessor_Proc
 		default:
 			log.Printf("Unknown Request type %v\n", v)
 		}
+		// 发送response
 		if err := srv.Send(resp); err != nil {
 			log.Printf("send error %v", err)
 		}
