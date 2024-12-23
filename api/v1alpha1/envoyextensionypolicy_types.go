@@ -29,6 +29,7 @@ type EnvoyExtensionPolicy struct {
 	Spec EnvoyExtensionPolicySpec `json:"spec"`
 
 	// Status defines the current status of EnvoyExtensionPolicy.
+	// Status定义了EnvoyExtensionPolicy当前的状态
 	Status gwapiv1a2.PolicyStatus `json:"status,omitempty"`
 }
 
@@ -55,6 +56,7 @@ type EnvoyExtensionPolicySpec struct {
 
 	// ExtProc is an ordered list of external processing filters
 	// that should added to the envoy filter chain
+	// ExtProc是一个有序的list of external processing filters，应该被添加到envoy filter chain
 	//
 	// +kubebuilder:validation:MaxItems=16
 	// +optional

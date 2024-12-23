@@ -5,6 +5,7 @@
 
 // Package v1alpha1 contains API schema definitions for the gateway.envoyproxy.io
 // API group.
+// Package v1alpha1包含了API schema，对于gateway.envoyproxy.io的定义
 //
 // +kubebuilder:object:generate=true
 // +groupName=gateway.envoyproxy.io

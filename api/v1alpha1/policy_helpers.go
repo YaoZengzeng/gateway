@@ -19,23 +19,28 @@ type PolicyTargetReferences struct {
 
 	// TargetRefs are the names of the Gateway resources this policy
 	// is being attached to.
+	// TargetRefs是这个policy关联的Gateway resources的名字
 	TargetRefs []gwapiv1a2.LocalPolicyTargetReferenceWithSectionName `json:"targetRefs,omitempty"`
 
 	// TargetSelectors allow targeting resources for this policy based on labels
+	// TargetSelectors允许这个policy基于labels选择resources
 	TargetSelectors []TargetSelector `json:"targetSelectors,omitempty"`
 }
 
 // +kubebuilder:validation:XValidation:rule="has(self.group) ? self.group == 'gateway.networking.k8s.io' : true ", message="group must be gateway.networking.k8s.io"
 type TargetSelector struct {
 	// Group is the group that this selector targets. Defaults to gateway.networking.k8s.io
+	// Group是这个selector选择的group
 	//
 	// +kubebuilder:default:="gateway.networking.k8s.io"
 	Group *gwapiv1a2.Group `json:"group,omitempty"`
 
 	// Kind is the resource kind that this selector targets.
+	// Kind是这个selector选择的目标resource kind
 	Kind gwapiv1a2.Kind `json:"kind"`
 
 	// MatchLabels are the set of label selectors for identifying the targeted resource
+	// MatchLabels是一系列的label selectors，用于标识targeted resource
 	MatchLabels map[string]string `json:"matchLabels"`
 }
 

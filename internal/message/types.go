@@ -22,6 +22,7 @@ import (
 type ProviderResources struct {
 	// GatewayAPIResources is a map from a GatewayClass name to
 	// a group of gateway API and other related resources.
+	// GatewayAPIResources是一个映射，从一个GatewayClass name到一系列的gateway API以及其他相关的资源
 	GatewayAPIResources watchable.Map[string, *resource.ControllerResources]
 
 	// GatewayAPIStatuses is a group of gateway api

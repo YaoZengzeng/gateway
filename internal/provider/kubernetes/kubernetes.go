@@ -30,12 +30,14 @@ import (
 // Provider is the scaffolding for the Kubernetes provider. It sets up dependencies
 // and defines the topology of the provider and its managed components, wiring
 // them together.
+// Provider是Kubernetes provider的脚手架，它设置依赖以及定义provider的拓扑以及它的管理组件，将他们关联在一起
 type Provider struct {
 	client  client.Client
 	manager manager.Manager
 }
 
 // New creates a new Provider from the provided EnvoyGateway.
+// New创建一个新的Provder，从提供的EnvoyGateway
 func New(cfg *rest.Config, svr *ec.Server, resources *message.ProviderResources) (*Provider, error) {
 	// TODO: Decide which mgr opts should be exposed through envoygateway.provider.kubernetes API.
 
@@ -95,6 +97,7 @@ func New(cfg *rest.Config, svr *ec.Server, resources *message.ProviderResources)
 	}
 
 	// Create and register the controllers with the manager.
+	// 创建并且注册controllers，用manager
 	if err := newGatewayAPIController(mgr, svr, updateHandler.Writer(), resources); err != nil {
 		return nil, fmt.Errorf("failted to create gatewayapi controller: %w", err)
 	}

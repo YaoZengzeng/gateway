@@ -27,14 +27,17 @@ const (
 
 // Server wraps the EnvoyGateway configuration and additional parameters
 // used by Envoy Gateway server.
+// Server封装了EnvoyGateawy的配置以及额外的参数，被Envoy Gateway server使用
 type Server struct {
 	// EnvoyGateway is the configuration used to startup Envoy Gateway.
+	// EnvoyGateway是配置用于启动Envoy Gateway
 	EnvoyGateway *egv1a1.EnvoyGateway
 	// Namespace is the namespace that Envoy Gateway runs in.
 	Namespace string
 	// DNSDomain is the dns domain used by k8s services. Defaults to "cluster.local".
 	DNSDomain string
 	// Logger is the logr implementation used by Envoy Gateway.
+	// Logger是Envoy Gateway使用的logr实现
 	Logger logging.Logger
 	// Elected chan is used to signal what a leader is elected
 	Elected chan struct{}

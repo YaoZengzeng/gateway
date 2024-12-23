@@ -37,6 +37,7 @@ func (r *Runner) Name() string {
 }
 
 // Start the provider runner
+// 启动providier runner
 func (r *Runner) Start(ctx context.Context) (err error) {
 	r.Logger = r.Logger.WithName(r.Name()).WithValues("runner", r.Name())
 

@@ -70,11 +70,15 @@ func (t *Translator) ProcessEnvoyExtensionPolicies(envoyExtensionPolicies []*egv
 
 	// Translate
 	// 1. First translate Policies targeting xRoutes
+	// 1. 首先翻译Polices指向xRoutes
 	// 2. Finally, the policies targeting Gateways
+	// 2. 最后，polices指向Gateways
 
 	// Process the policies targeting xRoutes
+	// 处理指向xRoutes的polices
 	for _, currPolicy := range envoyExtensionPolicies {
 		policyName := utils.NamespacedName(currPolicy)
+		// 获取target ref
 		targetRefs := getPolicyTargetRefs(currPolicy.Spec.PolicyTargetReferences, routes)
 		for _, currTarget := range targetRefs {
 			if currTarget.Kind != resource.KindGateway {
@@ -94,6 +98,7 @@ func (t *Translator) ProcessEnvoyExtensionPolicies(envoyExtensionPolicies []*egv
 				// Find the Gateway that the route belongs to and add it to the
 				// gatewayRouteMap and ancestor list, which will be used to check
 				// policy overrides and populate its ancestor status.
+				// 找到这个route属于的Gateway并且添加到gatewayRouteMap以及ancestor list
 				parentRefs := GetParentReferences(route)
 				ancestorRefs := make([]gwapiv1a2.ParentReference, 0, len(parentRefs))
 				for _, p := range parentRefs {
@@ -147,6 +152,7 @@ func (t *Translator) ProcessEnvoyExtensionPolicies(envoyExtensionPolicies []*egv
 	}
 
 	// Process the policies targeting Gateways
+	// 处理指向Gateways的policies
 	for _, currPolicy := range envoyExtensionPolicies {
 		policyName := utils.NamespacedName(currPolicy)
 		targetRefs := getPolicyTargetRefs(currPolicy.Spec.PolicyTargetReferences, gateways)
@@ -477,6 +483,7 @@ func (t *Translator) buildExtProc(
 
 	if extProc.ProcessingMode != nil {
 		if extProc.ProcessingMode.Request != nil {
+			// 如果指定了Request的话，Header默认为true
 			extProcIR.RequestHeaderProcessing = true
 			if extProc.ProcessingMode.Request.Body != nil {
 				extProcIR.RequestBodyProcessingMode = ptr.To(ir.ExtProcBodyProcessingMode(*extProc.ProcessingMode.Request.Body))

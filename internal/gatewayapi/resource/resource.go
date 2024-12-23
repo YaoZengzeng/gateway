@@ -30,6 +30,7 @@ type (
 
 // Resources holds the Gateway API and related
 // resources that the translators needs as inputs.
+// Resources维护Gateway API以及相关的resources，translators需要作为inputs
 // +k8s:deepcopy-gen=true
 type Resources struct {
 	// This field is only used for marshalling/unmarshalling purposes and is not used by

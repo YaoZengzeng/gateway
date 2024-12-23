@@ -754,9 +754,12 @@ func secretBtlsIndexFunc(rawObj client.Object) []string {
 }
 
 // addEnvoyExtensionPolicyIndexers adds indexing on EnvoyExtensionPolicy.
+// addEnvoyExtensionPolicyIndexers添加对于EnvoyExtensionPolicy的索引
 //   - For Service objects that are referenced in EnvoyExtensionPolicy objects via
 //     `.spec.extProc.[*].service.backendObjectReference`. This helps in querying for
 //     EnvoyExtensionPolicy that are affected by a particular Service CRUD.
+//   - 对于Service对象，被EnvoyExtensionPolicy索引，通过`.spec.extProc.[*].service.backendObjectReference`，这能帮助查询EnvoyExtensionPolicy
+//     被特定的Service CRUD影响
 func addEnvoyExtensionPolicyIndexers(ctx context.Context, mgr manager.Manager) error {
 	var err error
 

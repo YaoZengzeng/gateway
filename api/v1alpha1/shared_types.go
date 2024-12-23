@@ -55,6 +55,7 @@ const (
 	ProviderTypeKubernetes ProviderType = "Kubernetes"
 
 	// ProviderTypeCustom defines the "Custom" provider.
+	// ProviderTypeCustom定义了"自定义"的provider
 	ProviderTypeCustom ProviderType = "Custom"
 )
 
@@ -494,6 +495,7 @@ type BackendRef struct {
 // BackendCluster contains all the configuration required for configuring access
 // to a backend. This can include multiple endpoints, and settings that apply for
 // managing the connection to all these endpoints.
+// BackendCluster包含所有需要的配置，用于配置对于一个backend的访问，这可以包含多个endpoints，以及设置，应用对于所有endpoints的管理
 type BackendCluster struct {
 	// BackendRef references a Kubernetes object that represents the
 	// backend server to which the authorization request will be sent.
@@ -504,6 +506,7 @@ type BackendCluster struct {
 
 	// BackendRefs references a Kubernetes object that represents the
 	// backend server to which the authorization request will be sent.
+	// BackendRefs代表一个Kubernetes object，代表backend server，authorization req可以被发送
 	//
 	// +kubebuilder:validation:MaxItems=16
 	// +optional
@@ -511,6 +514,7 @@ type BackendCluster struct {
 
 	// BackendSettings holds configuration for managing the connection
 	// to the backend.
+	// BackendSettings维护配置，用于管理到backend的连接
 	//
 	// +optional
 	BackendSettings *ClusterSettings `json:"backendSettings,omitempty"`

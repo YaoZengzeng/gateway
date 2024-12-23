@@ -2592,15 +2592,19 @@ type ExtProc struct {
 	FailOpen *bool `json:"failOpen,omitempty" yaml:"failOpen,omitempty"`
 
 	// RequestHeaderProcessing Defines if request headers are processed
+	// RequestHeaderProcessing定义request headers是否被处理
 	RequestHeaderProcessing bool `json:"requestHeaderProcessing,omitempty" yaml:"requestHeaderProcessing,omitempty"`
 
 	// RequestBodyProcessingMode Defines request body processing
+	// RequestBodyProcessingMode定义request body的处理
 	RequestBodyProcessingMode *ExtProcBodyProcessingMode `json:"requestBodyProcessingMode,omitempty" yaml:"requestBodyProcessingMode,omitempty"`
 
 	// ResponseHeaderProcessingMode Defines if response headers are processed
+	// ResponseHeaderProcessingMode定义response headers是否被处理
 	ResponseHeaderProcessing bool `json:"responseHeaderProcessing,omitempty" yaml:"responseHeaderProcessing,omitempty"`
 
 	// ResponseBodyProcessingMode Defines response body processing
+	// ResponseBodyProcessingMode定义response body的处理
 	ResponseBodyProcessingMode *ExtProcBodyProcessingMode `json:"responseBodyProcessingMode,omitempty" yaml:"responseBodyProcessingMode,omitempty"`
 }
 

@@ -218,6 +218,7 @@ func (t *Translator) Translate(resources *resource.Resources) (*TranslateResult,
 		resources.SecurityPolicies, gateways, routes, resources, xdsIR)
 
 	// Process EnvoyExtensionPolicies
+	// 处理EnvoyExtensionPolicies
 	envoyExtensionPolicies := t.ProcessEnvoyExtensionPolicies(
 		resources.EnvoyExtensionPolicies, gateways, routes, resources, xdsIR)
 

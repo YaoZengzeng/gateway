@@ -225,6 +225,7 @@ func GetHostnames(route RouteContext) []string {
 }
 
 // GetParentReferences returns the ParentReference of the Route object.
+// GetParentReferences返回Route对象的ParnetReference
 func GetParentReferences(route RouteContext) []gwapiv1.ParentReference {
 	rv := reflect.ValueOf(route).Elem()
 	pr := rv.FieldByName("Spec").FieldByName("ParentRefs")

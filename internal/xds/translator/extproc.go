@@ -122,10 +122,12 @@ func extProcConfig(extProc ir.ExtProc) *extprocv3.ExternalProcessor {
 	}
 
 	if extProc.RequestBodyProcessingMode != nil {
+		// 如果RequestBodyProcessingMode不为nil，则请求Request Body Mode
 		config.ProcessingMode.RequestBodyMode = buildExtProcBodyProcessingMode(extProc.RequestBodyProcessingMode)
 	}
 
 	if extProc.RequestHeaderProcessing {
+		// 设置Request Header Mode默认为Send
 		config.ProcessingMode.RequestHeaderMode = extprocv3.ProcessingMode_SEND
 	}
 

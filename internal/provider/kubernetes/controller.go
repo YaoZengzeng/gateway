@@ -89,6 +89,7 @@ func newGatewayAPIController(mgr manager.Manager, cfg *config.Server, su Updater
 	ctx := context.Background()
 
 	// Gather additional resources to watch from registered extensions
+	// 收集额外的资源，来监听注册的extensions
 	var extServerPoliciesGVKs []schema.GroupVersionKind
 	var extGVKs []schema.GroupVersionKind
 	if cfg.EnvoyGateway.ExtensionManager != nil {
@@ -121,6 +122,7 @@ func newGatewayAPIController(mgr manager.Manager, cfg *config.Server, su Updater
 	}
 
 	// controller-runtime doesn't allow run controller with same name for more than once
+	// controller-runtime不允许同样名字的controller运行超过一次
 	// see https://github.com/kubernetes-sigs/controller-runtime/blob/2b941650bce159006c88bd3ca0d132c7bc40e947/pkg/controller/name.go#L29
 	name := fmt.Sprintf("gatewayapi-%d", time.Now().Unix())
 	c, err := controller.New(name, mgr, controller.Options{Reconciler: r, SkipNameValidation: skipNameValidation()})
@@ -130,9 +132,11 @@ func newGatewayAPIController(mgr manager.Manager, cfg *config.Server, su Updater
 	r.log.Info("created gatewayapi controller")
 
 	// Subscribe to status updates
+	// 订阅status update
 	r.subscribeAndUpdateStatus(ctx, cfg.EnvoyGateway.EnvoyGatewaySpec.ExtensionManager != nil)
 
 	// Watch resources
+	// 监听resources
 	if err := r.watchResources(ctx, mgr, c); err != nil {
 		return fmt.Errorf("error watching resources: %w", err)
 	}
@@ -159,6 +163,8 @@ func byNamespaceSelectorEnabled(eg *egv1a1.EnvoyGateway) bool {
 // Reconcile handles reconciling all resources in a single call. Any resource event should enqueue the
 // same reconcile.Request containing the gateway controller name. This allows multiple resource updates to
 // be handled by a single call to Reconcile. The reconcile.Request DOES NOT map to a specific resource.
+// Reconcile处理对于所有资源的调谐，在单个调用中，所有的resource event应该入队同样的reconcile.Reqeust，包含gateway controller name
+// 这允许多个resource updates在单个对Reconcile里更新，reconcile.Requests不映射到特定的资源
 func (r *gatewayAPIReconciler) Reconcile(ctx context.Context, _ reconcile.Request) (reconcile.Result, error) {
 	var (
 		managedGCs []*gwapiv1.GatewayClass
@@ -189,6 +195,7 @@ func (r *gatewayAPIReconciler) Reconcile(ctx context.Context, _ reconcile.Reques
 	gwcResources := make(resource.ControllerResources, 0, len(managedGCs))
 	for _, managedGC := range managedGCs {
 		// Initialize resource types.
+		// 初始化resource类型
 		gwcResource := resource.NewResources()
 		gwcResource.GatewayClass = managedGC
 		gwcResources = append(gwcResources, gwcResource)
@@ -208,6 +215,7 @@ func (r *gatewayAPIReconciler) Reconcile(ctx context.Context, _ reconcile.Reques
 		}
 
 		// Add all Gateways, their associated Routes, and referenced resources to the resourceTree
+		// 添加所有的Gateways，他们相关的Routes以及引用的resources到resourceTree
 		if err = r.processGateways(ctx, managedGC, resourceMappings, gwcResource); err != nil {
 			return reconcile.Result{}, err
 		}
@@ -248,6 +256,7 @@ func (r *gatewayAPIReconciler) Reconcile(ctx context.Context, _ reconcile.Reques
 
 		if r.eepCRDExists {
 			// Add all EnvoyExtensionPolicies and their referenced resources to the resourceTree
+			// 添加所有的EnvoyExtensionPolicies以及他们引用的resources到resourceTree
 			if err = r.processEnvoyExtensionPolicies(ctx, gwcResource, resourceMappings); err != nil {
 				return reconcile.Result{}, err
 			}
@@ -1685,11 +1694,13 @@ func (r *gatewayAPIReconciler) watchResources(ctx context.Context, mgr manager.M
 		}
 	}
 
+	// 对EnvoyExtensionPolicy进行处理
 	r.eepCRDExists = r.crdExists(mgr, resource.KindEnvoyExtensionPolicy, egv1a1.GroupVersion.String())
 	if !r.eepCRDExists {
 		r.log.Info("EnvoyExtensionPolicy CRD not found, skipping EnvoyExtensionPolicy watch")
 	} else {
 		// Watch EnvoyExtensionPolicy
+		// 监听EnvoyExtensionPolicy
 		eepPredicates := []predicate.TypedPredicate[*egv1a1.EnvoyExtensionPolicy]{
 			predicate.TypedGenerationChangedPredicate[*egv1a1.EnvoyExtensionPolicy]{},
 		}
@@ -1700,6 +1711,7 @@ func (r *gatewayAPIReconciler) watchResources(ctx context.Context, mgr manager.M
 		}
 
 		// Watch EnvoyExtensionPolicy CRUDs
+		// 监听EnvoyExntensionPolicy的CRUDs
 		if err := c.Watch(
 			source.Kind(mgr.GetCache(), &egv1a1.EnvoyExtensionPolicy{},
 				handler.TypedEnqueueRequestsFromMapFunc(func(ctx context.Context, eep *egv1a1.EnvoyExtensionPolicy) []reconcile.Request {
@@ -2000,6 +2012,7 @@ func (r *gatewayAPIReconciler) processBackendTLSPolicyRefs(
 }
 
 // processEnvoyExtensionPolicies adds EnvoyExtensionPolicies and their referenced resources to the resourceTree
+// processEnvoyExtensionPolicies添加EnvoyExtensionPolicies以及他们引用的resources到resourceTree
 func (r *gatewayAPIReconciler) processEnvoyExtensionPolicies(
 	ctx context.Context, resourceTree *resource.Resources, resourceMap *resourceMappings,
 ) error {
@@ -2008,6 +2021,7 @@ func (r *gatewayAPIReconciler) processEnvoyExtensionPolicies(
 		return fmt.Errorf("error listing EnvoyExtensionPolicies: %w", err)
 	}
 
+	// 遍历extensionPolices
 	for _, policy := range envoyExtensionPolicies.Items {
 		envoyExtensionPolicy := policy //nolint:copyloopvar
 		// Discard Status to reduce memory consumption in watchable
@@ -2020,6 +2034,7 @@ func (r *gatewayAPIReconciler) processEnvoyExtensionPolicies(
 	}
 
 	// Add the referenced Resources in EnvoyExtensionPolicies to the resourceTree
+	// 添加在EnvoyExtensionPolicies中引用的资源到resourceTree
 	r.processEnvoyExtensionPolicyObjectRefs(ctx, resourceTree, resourceMap)
 
 	return nil
